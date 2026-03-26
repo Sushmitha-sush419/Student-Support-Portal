@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+</head>
+<body>
+<h2 style="text-align:center;">Lost Items List 🔍</h2>
+<form method="POST" style="text-align:center;">
+    <input type="text" name="search" placeholder="Search item..." required>
+    <button type="submit">Search</button>
+</form>
+{% for item in items %}
+<div style="
+    border:1px solid #ccc;
+    padding:15px;
+    margin:15px auto;
+    width:50%;
+    border-radius:10px;
+    box-shadow: 2px 2px 10px #ccc;
+">
+    <h3>{{ item[1] }}</h3>
+    <p><b>Description:</b> {{ item[2] }}</p>
+    <p><b>Location:</b> {{ item[3] }}</p>
+    <p><b>Contact:</b> {{ item[4] }}</p>
+    {% if item[5] %}
+    <img src="{{ url_for('static', filename='uploads/' + item[5]) }}" width="150"><br>
+{% endif %}
+</div>
+{% endfor %}
+{% if items|length == 0 %}
+    <p style="text-align:center; color:red; font-size:18px;">
+        ❌ No results found for "{{ search }}"
+    </p>
+{% endif %}
+<div style="text-align:center; margin:20px;">
+    <a href="/">
+        <button>⬅ Back to Portal</button>
+    </a>
+</div>
+</body>
+</html>
