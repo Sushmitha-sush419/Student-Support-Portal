@@ -73,8 +73,12 @@ def view():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
 
+    searched= False
+    search=" "
+
     if request.method == 'POST':
-        search = request.form['search']
+        searched = True
+        search = request.form.get('search','').strip()
         cur.execute("SELECT * FROM lost_items WHERE item_name LIKE ?",
         ('%' + search + '%',))
     else:
@@ -83,7 +87,7 @@ def view():
     data = cur.fetchall()
     conn.close()
 
-    return render_template('view.html', items=data,search=search if request.method=='POST' else "")
+    return render_template('view.html', items=data, search=search,searched = searched)
 @app.route('/found', methods=['GET', 'POST'])
 def found():
     if request.method == 'POST':

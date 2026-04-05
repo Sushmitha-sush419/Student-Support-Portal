@@ -28,8 +28,8 @@
 {% endif %}
 </div>
 {% endfor %}
-{% if items|length == 0 %}
-    <p style="text-align:center; color:red; font-size:18px;">
+{% if serach != " " and items|length == 0 %}
+    <p style="color:red; font-weight:bold;">
         ❌ No results found for "{{ search }}"
     </p>
 {% endif %}
