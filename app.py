@@ -1,3 +1,4 @@
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import os
@@ -75,19 +76,24 @@ def view():
 
     searched= False
     search=" "
+    data = []
+    no_result = False
+
 
     if request.method == 'POST':
-        searched = True
-        search = request.form.get('search','').strip()
-        cur.execute("SELECT * FROM lost_items WHERE item_name LIKE ?",
-        ('%' + search + '%',))
-    else:
-        cur.execute("SELECT * FROM lost_items")
 
-    data = cur.fetchall()
+        search = request.form.get('search','').strip()
+        if search:
+            searched =True
+            cur.execute("SELECT * FROM lost_items WHERE LOWER(item_name) LIKE LOWER(?)",
+        ('%' + search + '%',))
+
+            data = cur.fetchall()
+            if len(data) == 0:
+                no_result = True
     conn.close()
 
-    return render_template('view.html', items=data, search=search,searched = searched)
+    return render_template('view.html', items=data, search=search,searched = searched, no_result = no_result)
 @app.route('/found', methods=['GET', 'POST'])
 def found():
     if request.method == 'POST':
@@ -95,13 +101,20 @@ def found():
         desc = request.form['description']
         loc = request.form['location']
         contact = request.form['contact']
+        file = request.files['image']
+
+        import os
+
+        UPLOAD_FOLDER = 'static/uploads'
 
         file = request.files['image']
-        filename = ""
 
-        if file:
+        if file and file.filename != "":
             filename = file.filename
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+        else:
+            filename = ""
 
         conn = sqlite3.connect('database.db')
         cur = conn.cursor()
@@ -112,9 +125,11 @@ def found():
         )
 
         conn.commit()
+        print("Inserted:",item, desc, loc, contact, filename)
+
         conn.close()
 
-        return redirect(url_for('view_found'))
+        return redirect('view_found')
 
     return render_template('found.html')
 @app.route('/view_found')
@@ -122,9 +137,13 @@ def view_found():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM found_items")
+
     data = cur.fetchall()
     conn.close()
 
+
+
     return render_template('view_found.html', items=data)
+
 if __name__ == '__main__':
     app.run(debug=True)

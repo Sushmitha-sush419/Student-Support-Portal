@@ -1,14 +1,58 @@
-<h2>Report Found Item 📦</h2>
+<html>
+<head>
+     <style>
+     body {
+    background: #f4f6f8;
+    font-family: Arial;
+    }
+     .form-container {
+     width: 400px;
+     margin: 50px auto;
+     padding: 25px;
+     background: #ffffff;
+     border-radius: 10px;
+     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+     text-align: center;
+}
 
-<form method="POST" enctype="multipart/form-data">
-    Item Name: <input type="text" name="item"><br><br>
-    Description: <input type="text" name="description"><br><br>
-    Location Found: <input type="text" name="location"><br><br>
-    Contact: <input type="text" name="contact"><br><br>
+.form-container h2 {
+    margin-bottom: 20px;
+}
+
+.form-container input {
+    width: 90%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.form-container button {
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.form-container button:hover {
+    background: #45a049;
+}
+
+     </style>
+<body>
+<div class="form-container">
+    <a href="/"> <- Back to Portal</a>
+    <h2>Report Found Item 📦</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+    Item Name: <input type="text" name="item" required><br><br>
+    Description: <input type="text" name="description" required><br><br>
+    Location Found: <input type="text" name="location" required><br><br>
+    Contact: <input type="text" name="contact" required><br><br>
     Image: <input type="file" name="image"><br><br>
 
     <button type="submit">Submit</button>
-</form>
-
-<br>
-<a href="/">⬅ Back to Portal</a>
+    </form>
+</div>
+</body>
+</html>

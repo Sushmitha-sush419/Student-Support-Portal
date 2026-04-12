@@ -2,14 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <style>
+    .search-container {
+    text-align: center;
+    margin-top: 30px;
+     }
 
+    .search-container input {
+    padding: 8px;
+    width: 250px;
+    }
+
+    .search-container button {
+    padding: 8px 12px;
+    cursor: pointer;
+    }
+
+   .no-result {
+    color: red;
+    margin-top: 15px;
+    font-weight: bold;
+    }
+    </style>
 </head>
 <body>
 <h2 style="text-align:center;">Lost Items List 🔍</h2>
-<form method="POST" style="text-align:center;">
-    <input type="text" name="search" placeholder="Search item..." required>
-    <button type="submit">Search</button>
-</form>
+<div class="search-container">
+
+    <form method="POST" action="/view">
+     <input type="text" name="search" placeholder="Search item..." required>
+       <button type="submit">Search</button>
+    </form>
+    {% if no_result %}
+        <p class="no_result"> ❌ No results found for "{{ search }}"</p>
+    {% endif %}
+</div>
 {% for item in items %}
 <div style="
     border:1px solid #ccc;
@@ -28,12 +55,9 @@
 {% endif %}
 </div>
 {% endfor %}
-{% if serach != " " and items|length == 0 %}
-    <p style="color:red; font-weight:bold;">
-        ❌ No results found for "{{ search }}"
-    </p>
-{% endif %}
+
 <div style="text-align:center; margin:20px;">
+
     <a href="/">
         <button>⬅ Back to Portal</button>
     </a>
