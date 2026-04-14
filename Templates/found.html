@@ -45,11 +45,12 @@
     <h2>Report Found Item 📦</h2>
 
     <form method="POST" enctype="multipart/form-data">
-    Item Name: <input type="text" name="item" required><br><br>
-    Description: <input type="text" name="description" required><br><br>
-    Location Found: <input type="text" name="location" required><br><br>
-    Contact: <input type="text" name="contact" required><br><br>
+    Item Name: <input type="text" name="item" placeholder="Item name" required><br><br>
+    Description: <input type="text" name="description"  required><br><br>
+    Location Found: <input type="text" name="location" placeholder="Found Location" required><br><br>
+    Contact: <input type="text" name="contact" placeholder="Your contact" required><br><br>
     Image: <input type="file" name="image"><br><br>
+    <input type="text" name="secret" placeholder="Secret identification detail" required><br><br>
 
     <button type="submit">Submit</button>
     </form>

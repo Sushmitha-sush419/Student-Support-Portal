@@ -21,6 +21,7 @@ def init_db():
             location TEXT,
             contact TEXT,
             image TEXT
+            
         )
     
     ''')
@@ -31,7 +32,8 @@ def init_db():
             description TEXT,
             location TEXT,
             contact TEXT,
-            image TEXT
+            image TEXT, 
+            secret_answer Text
         )
     ''')
     conn.commit()
@@ -51,6 +53,7 @@ def lost():
         loc = request.form['location']
         contact = request.form['contact']
         file = request.files['image']
+        secret = request.form['secret']
 
         filename = ""
         if file:
@@ -61,7 +64,7 @@ def lost():
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO lost_items (item_name, description, location, contact,image) VALUES (?, ?, ?, ?, ?)",
-            (item, desc, loc, contact, filename)
+            (item, desc, loc, contact, filename,)
         )
         conn.commit()
         conn.close()
@@ -102,6 +105,7 @@ def found():
         loc = request.form['location']
         contact = request.form['contact']
         file = request.files['image']
+        secret = request.form['secret']
 
         import os
 
@@ -120,18 +124,17 @@ def found():
         cur = conn.cursor()
 
         cur.execute(
-            "INSERT INTO found_items (item_name, description, location, contact, image) VALUES (?, ?, ?, ?, ?)",
-            (item, desc, loc, contact, filename)
+            "INSERT INTO found_items (item_name, description, location, contact, image, secret_answer) VALUES (? ,?, ?, ?, ?, ?)",
+            (item, desc, loc, contact, filename,secret)
         )
 
         conn.commit()
-        print("Inserted:",item, desc, loc, contact, filename)
-
         conn.close()
 
-        return redirect('view_found')
+        return redirect('/view_found')
 
     return render_template('found.html')
+
 @app.route('/view_found')
 def view_found():
     conn = sqlite3.connect('database.db')
@@ -140,10 +143,38 @@ def view_found():
 
     data = cur.fetchall()
     conn.close()
+    print(data)
 
+    return render_template("view_found.html", data=data)
+@app.route('/claim/<int:item_id>', methods=['GET', 'POST'])
+def claim(item_id):
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
 
+    # Get original lost item secret
+    cur.execute("SELECT secret_answer FROM found_items WHERE id=?", (item_id,))
+    result = cur.fetchone()
 
-    return render_template('view_found.html', items=data)
+    if request.method == 'POST':
+        name = request.form['name']
+        proof = request.form['proof']
+        secret_input = request.form['secret']
+
+        if result:
+            actual_secret = result[0]
+
+            # Verification logic
+            if secret_input.strip().lower() == actual_secret.strip().lower():
+                cur.execute("DELETE FROM found_items WHERE id=?", (item_id,))
+                conn.commit()
+                conn.close()
+                return "✅ Claim Verified Successfully!"
+            else:
+                conn.close()
+                return "❌ Verification Failed! Incorrect details."
+
+    conn.close()
+    return render_template('claim.html', item_id=item_id)
 
 if __name__ == '__main__':
     app.run(debug=True)

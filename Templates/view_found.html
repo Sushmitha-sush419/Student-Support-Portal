@@ -49,27 +49,29 @@
 
     <a href="/" class="back">⬅ Back to Portal</a>
 
+
     <h2>📦 Found Items</h2>
+    {% if data %}
 
-{% if items and items|length > 0 %}
+        {% for item in data %}
+            <div class="card">
+                <p><b>Item:</b> {{ item[1] }}</p>
+                <p><b>Description:</b>{{ item[2] }}</p>
+                <p><b>Location:</b> {{ item[3] }}</p>
+                <p><b>Contact:</b> {{ item[4] }}</p>
 
-    {% for item in items %}
-        <div class="card">
-            <h3>{{ item[1] }}</h3>
-            <p>{{ item[2] }}</p>
-            <p><b>Location:</b> {{ item[3] }}</p>
-            <p><b>Contact:</b> {{ item[4] }}</p>
 
-            {% if item[5] %}
-                <img src="/static/uploads/{{ item[5] }}" width="120">
-            {% endif %}
-        </div>
+                {% if item[5] %}
+                    <img src="/static/uploads/{{ item[5] }}" width="120">
+                {% endif %}
+                <a href="/claim/{{ item[0] }}">Claim</a>
+            </div>
         <br>
-    {% endfor %}
+        {% endfor %}
 
-{% else %}
-    <p>No found items yet 😳</p>
-{% endif %}
+    {% else %}
+         <p>No found items yet 😳</p>
+    {% endif %}
     </div>
 
 </body>
