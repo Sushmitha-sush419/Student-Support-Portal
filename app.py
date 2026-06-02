@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_mail import Mail, Message
 import os
 import sqlite3
-
+db_path = os.path.abspath("database.db")
+print(f"DEBUG: Connecting to database at: {db_path}")
+print("DATABASE IS LOCATED AT:", os.path.abspath("database.db"))
 # ... rest of your code ...
 app = Flask(__name__)
 app.secret_key = 'student_support_portal'
@@ -25,22 +27,30 @@ DB_PATH = os.path.join(BASE_DIR, "database.db")
 
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+import sqlite3
+
+def fix_database():
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    try:
+        cur.execute("ALTER TABLE found_items ADD COLUMN secret_question TEXT")
+        cur.execute("ALTER TABLE found_items ADD COLUMN secret_answer TEXT")
+        cur.execute("ALTER TABLE claims ADD COLUMN User_Answer TEXT")
+        conn.commit()
+        print("Columns added successfully!")
+    except sqlite3.OperationalError as e:
+        print(f"Columns might already exist: {e}")
+    conn.close()
+
+# Call this once, then remove it
+fix_database()
 
 # Create DB
 def init_db():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS lost_items (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_name TEXT,
-            description TEXT,
-            location TEXT,
-            contact TEXT,
-            image TEXT
-        )
-    
-    ''')
+
+    # --- FOUND ITEMS ---
     cur.execute('''
         CREATE TABLE IF NOT EXISTS found_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,7 +58,22 @@ def init_db():
             description TEXT,
             location TEXT,
             contact TEXT,
-            image TEXT
+            image TEXT,
+            secret_question TEXT,
+            secret_answer TEXT
+        )
+    ''')
+
+    # --- CLAIMS ---
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS claims (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_id INTEGER,
+            claimer_name TEXT,
+            claimer_contact TEXT,
+            proof TEXT,
+            User_Answer TEXT,
+            status TEXT DEFAULT 'Pending'
         )
     ''')
     cur.execute('''
@@ -127,7 +152,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
 
 @app.route('/home')
 def home():
@@ -208,6 +232,8 @@ def all_items():
         lost_items=lost_items,
         found_items=found_items
     )
+
+
 @app.route('/found', methods=['GET', 'POST'])
 def found():
     if request.method == 'POST':
@@ -215,13 +241,15 @@ def found():
         desc = request.form['description']
         loc = request.form['location']
         contact = request.form['contact']
+
+        # 1. Capture the new secret fields
+        secret_question = request.form['secret_question']
+        secret_answer = request.form['secret_answer']
+
         file = request.files['image']
 
         import os
-
         UPLOAD_FOLDER = 'static/uploads'
-
-        file = request.files['image']
 
         if file and file.filename != "":
             filename = file.filename
@@ -233,14 +261,15 @@ def found():
         conn = sqlite3.connect('database.db')
         cur = conn.cursor()
 
+        # 2. Update the INSERT statement to include the new columns
         cur.execute(
-            "INSERT INTO found_items (item_name, description, location, contact, image) VALUES (?, ?, ?, ?, ?)",
-            (item, desc, loc, contact, filename)
+            """INSERT INTO found_items 
+            (item_name, description, location, contact, image, secret_question, secret_answer) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (item, desc, loc, contact, filename, secret_question, secret_answer)
         )
 
         conn.commit()
-        print("Inserted:",item, desc, loc, contact, filename)
-
         conn.close()
 
         return redirect('view_found')
@@ -888,6 +917,179 @@ def new_password():
             return redirect(url_for('login_page'))  # Redirects to home.html
 
     return render_template('new_password.html')
+
+
+# app.py
+# Update your admin_claims route in app.py to this:
+@app.route('/admin_claim/<int:item_id>')
+def admin_claims(item_id):
+    if session.get('role') != 'admin':
+        return "Unauthorized"
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    # Pulling the data, including the user's answer
+    cur.execute('''
+        SELECT c.id, f.item_name, c.claimer_name, c.claimer_contact, 
+               c.proof, c.status, f.secret_question, f.secret_answer, c.user_answer
+        FROM claims c
+        JOIN found_items f ON c.item_id = f.id
+        WHERE c.item_id = ?
+    ''', (item_id,))
+    claims = cur.fetchall()
+    conn.close()
+    return render_template('admin_claim.html', claims=claims)
+
+@app.route('/secrete_questions')
+def add_secret_columns():
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+
+    try:
+        cur.execute("ALTER TABLE found_items ADD COLUMN secret_question TEXT")
+    except:
+        pass
+
+    try:
+        cur.execute("ALTER TABLE found_items ADD COLUMN secret_answer TEXT")
+    except:
+        pass
+
+    conn.commit()
+    conn.close()
+
+    return "Columns Added Successfully ✅"
+
+
+@app.route('/delete_found/<int:item_id>')
+def delete_found(item_id):
+    # Optional: Add a check here to ensure the user is an 'admin'
+    if session.get('role') != 'admin':
+        return "Unauthorized Access ❌"
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    cur.execute("DELETE FROM found_items WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+
+    return "Item (and its secret question) deleted successfully! ✅"
+
+@app.route('/delete_lost/<int:item_id>')
+def delete_lost(item_id):
+
+    if session.get("role") != "admin":
+        return "Unauthorized ❌", 403
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+
+    cur.execute(
+        "DELETE FROM lost_items WHERE id=?",
+        (item_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/all_items')
+
+
+@app.route('/admin_claim')
+def admin_claim():
+    if session.get('role') != 'admin':
+        return "Unauthorized Access"
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    cur.execute('''
+        SELECT claims.id, found_items.item_name, claims.claimer_name, 
+               claims.claimer_contact, claims.proof 
+        FROM claims 
+        JOIN found_items ON claims.item_id = found_items.id
+    ''')
+    all_claims = cur.fetchall()
+    conn.close()
+
+    return render_template('admin_claim.html', claims=all_claims)
+@app.route('/debug-routes')
+def debug_routes():
+    import urllib
+    output = []
+    for rule in app.url_map.iter_rules():
+        options = {}
+        for arg in rule.arguments:
+            options[arg] = "[{0}]".format(arg)
+        methods = ','.join(rule.methods)
+        url = urllib.parse.unquote(rule.rule)
+        line = "{:50s} {:20s} {}".format(rule.endpoint, methods, url)
+        output.append(line)
+    return "<pre>" + "\n".join(sorted(output)) + "</pre>"
+# Change your existing route in app.py to this exact block:
+
+@app.route('/update_status/<int:claim_id>/<string:status>')
+def update_status(claim_id, status):
+    if session.get('role') != 'admin':
+        return "Unauthorized"
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    # Update the status column in your claims table
+    cur.execute("UPDATE claims SET status = ? WHERE id = ?", (status, claim_id))
+    conn.commit()
+    conn.close()
+
+    return redirect(request.referrer)  # Redirects back to the page you were just on
+
+
+@app.route('/resolve_claim/<int:claim_id>', methods=['POST'])
+def resolve_claim(claim_id):
+    # Ensure only admins can do this
+    if session.get('role') != 'admin':
+        return "Unauthorized", 403
+
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    cur.execute("UPDATE claims SET status = 'Resolved' WHERE id = ?", (claim_id,))
+    conn.commit()
+    conn.close()
+
+    # Redirect back to the same page to see the update
+    return redirect(request.referrer)
+
+
+@app.route('/claim/<int:item_id>', methods=['GET', 'POST'])
+def claim(item_id):
+    # 1. Fetch item details to show the secret question
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    cur.execute("SELECT item_name, secret_question FROM found_items WHERE id = ?", (item_id,))
+    item = cur.fetchone()
+    conn.close()
+
+    if not item:
+        return "Item not found", 404
+
+    if request.method == 'POST':
+        # 2. Process the submission
+        name = request.form['name']
+        contact = request.form['contact']
+        proof = request.form['proof']
+        user_ans = request.form['secret']
+
+        conn = sqlite3.connect("database.db")
+        cur = conn.cursor()
+        cur.execute("""INSERT INTO claims 
+                       (item_id, claimer_name, claimer_contact, proof, user_answer, status) 
+                       VALUES (?, ?, ?, ?, ?, 'Pending')""",
+                    (item_id, name, contact, proof, user_ans))
+        conn.commit()
+        conn.close()
+        return "Claim submitted successfully!"
+
+    # 3. Render the form
+    return render_template('claim.html', item_id=item_id, item_name=item[0], secret_question=item[1])
 
 if __name__ == "__main__":
     init_db()

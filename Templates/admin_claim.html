@@ -1,0 +1,32 @@
+<h2>Review Claims</h2>
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Item</th>
+        <th>Claimer</th>
+        <th>Proof</th>
+        <th>Secret Question</th>
+        <th>Correct Answer</th>
+        <th>User's Answer</th>
+        <th>Status</th>
+        <th>Action</th> </tr>
+    {% for claim in claims %}
+    <tr>
+        <td>{{ claim[1] }}</td>
+        <td>{{ claim[2] }}</td>
+        <td>{{ claim[4] }}</td>
+        <td>{{ claim[6] }}</td>
+        <td>{{ claim[7] }}</td>
+        <td><b>{{ claim[8] }}</b></td>
+        <td>{{ claim[5] }}</td>
+        <td>
+            {% if claim[5] != 'Resolved' %}
+            <form action="/resolve_claim/{{ claim[0] }}" method="POST">
+                <button type="submit">Mark Resolved</button>
+            </form>
+            {% else %}
+            Done
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

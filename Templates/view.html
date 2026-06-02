@@ -99,6 +99,12 @@
         <p><b>Contact:</b> {{ item[4] }}</p>
         {% if item[5] %}
             <img src="{{ url_for('static', filename='uploads/' + item[5]) }}" width="150" style="border-radius:8px;">
+        {% if session['role'] == 'admin' %}
+<a href="/delete_lost/{{ item[0] }}"
+   onclick="return confirm('Delete this item?')">
+   Delete
+</a>
+{% endif %}
         {% endif %}
     </div>
     {% endfor %}

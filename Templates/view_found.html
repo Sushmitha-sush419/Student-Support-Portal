@@ -4,54 +4,26 @@
     <title>Found Items</title>
     <style>
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
+            margin: 0; font-family: Arial, sans-serif; text-align: center;
             background: linear-gradient(135deg, rgba(147, 197, 253, 0.35), rgba(59, 130, 246, 0.35)),
                         url('https://wp.classlawgroup.com/wp-content/uploads/2015/07/bigstock-Magnify-Glass-Blue-Grunge-16041161-1600.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            color: white;
-            padding: 30px;
+            background-size: cover; background-position: center;
+            background-attachment: fixed; min-height: 100vh;
+            color: white; padding: 30px;
         }
-
-        .back-home {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-        }
-        .back-home a {
-            color: white;
-            text-decoration: none;
-            background: #0F52BA;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
+        .back-home { position: absolute; top: 15px; left: 15px; }
+        .back-home a { color: white; text-decoration: none; background: #0F52BA; padding: 8px 14px; border-radius: 6px; font-size: 14px; }
         .container {
-            max-width: 800px;
-            margin: auto;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 800px; margin: auto; background: rgba(255, 255, 255, 0.2);
+            padding: 30px; border-radius: 20px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-
         .item-card {
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px auto;
-            text-align: left;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.9); color: #333;
+            border-radius: 15px; padding: 20px; margin: 20px auto;
+            text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
+        .admin-btn { background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; margin-right: 5px; font-size: 14px; }
         h2 { margin-top: 0; color: white; text-shadow: 1px 1px 2px #000; }
     </style>
 </head>
@@ -64,7 +36,7 @@
 <div class="container">
     <h2>📦 Found Items</h2>
 
-    {% if items and items|length > 0 %}
+    {% if items %}
         {% for item in items %}
             <div class="item-card">
                 <h3>{{ item[1] }}</h3>
@@ -74,6 +46,19 @@
 
                 {% if item[5] %}
                     <img src="/static/uploads/{{ item[5] }}" width="150" style="border-radius:8px;">
+                {% endif %}
+
+                <br><br>
+                <a href="/claim/{{ item[0] }}">Claim Item</a>
+
+                {% if session.get('role') == 'admin' %}
+                    <br><br>
+                    <a href="/admin_claim/{{ item[0] }}" class="admin-btn">Review Claims</a>
+                    <a href="/delete_found/{{ item[0] }}"
+                       onclick="return confirm('Delete this item?')"
+                       style="color: red; font-weight: bold; margin-left: 10px;">
+                       Delete
+                    </a>
                 {% endif %}
             </div>
         {% endfor %}
