@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complaint & Feedback Portal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#16222a,#3a6073);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:950px;
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.25);
+}
+
+.back-home{
+    position:absolute;
+    top:15px;
+    left:15px;
+    font-size:14px;
+}
+
+h1{
+    text-align:center;
+    color:#2c3e50;
+    margin-bottom:25px;
+}
+
+h2{
+    color:#34495e;
+    margin-bottom:15px;
+}
+
+/* Home Cards */
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card{
+    padding:30px;
+    border-radius:15px;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.complaint-card{
+    background:linear-gradient(135deg,#ff512f,#dd2476);
+}
+
+.feedback-card{
+    background:linear-gradient(135deg,#11998e,#38ef7d);
+}
+
+/* Forms */
+
+.section{
+    display:none;
+    animation:fade 0.4s ease;
+}
+
+.active{
+    display:block;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    font-weight:600;
+}
+
+input[type="text"],
+textarea{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin-top:6px;
+    font-family:'Poppins',sans-serif;
+}
+
+textarea{
+    resize:none;
+}
+
+.row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:8px;
+}
+
+.row label{
+    font-weight:400;
+    margin-top:0;
+}
+
+.small{
+    font-size:12px;
+    color:#666;
+    margin-top:5px;
+}
+
+/* Buttons */
+
+.buttons{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+}
+
+button{
+    border:none;
+    padding:11px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.primary{
+    background:#27ae60;
+    color:white;
+}
+
+.danger{
+    background:#c0392b;
+    color:white;
+}
+
+.back{
+    background:#7f8c8d;
+    color:white;
+    margin-bottom:15px;
+}
+
+.success{
+    display:none;
+    margin-top:15px;
+    background:#eafaf1;
+    color:#1d7d46;
+    padding:10px;
+    border-radius:8px;
+}
+
+@media(max-width:768px){
+
+.grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="back-home">
+    <a href="/home">⬅ Back to Home</a>
+</div>
+
+<div class="container">
+
+<h1>Complaint & Feedback Portal</h1>
+
+<!-- HOME PAGE -->
+
+<div id="home">
+
+<div class="grid">
+
+{% if session['role'] == 'student' %}
+
+<div class="card complaint-card" onclick="openSection('complaintSection')">
+
+<h2>Complaint</h2>
+
+<p>
+Submit campus or administration complaints.
+</p>
+
+</div>
+
+<div class="card feedback-card" onclick="openSection('feedbackSection')">
+
+<h2>Feedback</h2>
+
+<p>
+Share suggestions and feedback.
+</p>
+
+</div>
+
+{% endif %}
+
+{% if session['role'] == 'admin' %}
+
+<div class="card complaint-card">
+
+<h2>View Complaints</h2>
+
+<p>
+Manage submitted complaints.
+</p>
+
+<br>
+
+<a href="/admin/complaints"
+style="
+color:white;
+text-decoration:none;
+font-weight:bold;
+">
+Open →
+</a>
+
+</div>
+
+<div class="card feedback-card">
+
+<h2>View Feedbacks</h2>
+
+<p>
+Manage submitted feedbacks.
+</p>
+
+<br>
+
+<a href="/admin/feedback"
+style="
+color:white;
+text-decoration:none;
+font-weight:bold;
+">
+Open →
+</a>
+
+</div>
+
+{% endif %}
+
+</div>
+</div>
+
+<!-- COMPLAINT FORM -->
+
+<div id="complaintSection" class="section">
+
+<button type="button" class="back" onclick="goHome()">
+← Back
+</button>
+
+<h2>Complaint Form</h2>
+
+<form method="POST" action="/submit_complaint">
+
+<label>Select Complaint Type</label>
+
+<div class="row">
+
+<label>
+<input type="radio" name="ctype" value="Campus" required>
+Campus
+</label>
+
+<label>
+<input type="radio" name="ctype" value="Administration">
+Administration
+</label>
+
+<label>
+<input type="radio" name="ctype" value="Others">
+Others
+</label>
+
+</div>
+
+<label>Issue Title</label>
+
+<input
+type="text"
+name="issue_title"
+required
+placeholder="Enter issue title"
+>
+
+<label>Description</label>
+
+<textarea
+name="description"
+id="cdesc"
+rows="6"
+maxlength="500"
+required
+placeholder="Max 500 characters"
+></textarea>
+
+<div class="small">
+<span id="ccount">0</span>/500 characters
+</div>
+
+<div class="buttons">
+
+<button type="submit" class="primary">
+Submit
+</button>
+
+<button type="reset" class="danger">
+Reset
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+<!-- FEEDBACK FORM -->
+
+<div id="feedbackSection" class="section">
+
+<button type="button" class="back" onclick="goHome()">
+← Back
+</button>
+
+<h2>Feedback Form</h2>
+
+<form method="POST" action="/submit_feedback">
+
+<label>Feedback Type</label>
+
+<div class="row">
+
+<label>
+<input type="radio" name="ftype" value="Department" required>
+Department
+</label>
+
+<label>
+<input type="radio" name="ftype" value="Lecturer">
+Lecturer
+</label>
+
+</div>
+
+<label>Department</label>
+
+<div class="row">
+
+<label>
+<input type="radio" name="dept" value="BCA" required>
+BCA
+</label>
+
+<label>
+<input type="radio" name="dept" value="BSc">
+BSc
+</label>
+
+<label>
+<input type="radio" name="dept" value="BVoc">
+BVoc
+</label>
+
+</div>
+
+<label>Class</label>
+
+<input
+type="text"
+name="class"
+required
+placeholder="Enter your class"
+>
+
+<label>Issue Title</label>
+
+<input
+type="text"
+name="issue_title"
+required
+placeholder="Enter subject"
+>
+
+<label>Description</label>
+
+<textarea
+name="description"
+id="fdesc"
+rows="5"
+maxlength="300"
+required
+placeholder="Max 300 characters"
+></textarea>
+
+<div class="small">
+<span id="fcount">0</span>/300 characters
+</div>
+
+<div class="buttons">
+
+<button type="submit" class="primary">
+Submit
+</button>
+
+<button type="reset" class="danger">
+Reset
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+    /* OPEN FORMS */
+function openSection(id){
+
+    document.getElementById("home").style.display = "none";
+
+    document.getElementById("complaintSection").classList.remove("active");
+    document.getElementById("feedbackSection").classList.remove("active");
+
+    document.getElementById(id).classList.add("active");
+}
+
+/* BACK HOME */
+function goHome(){
+
+    document.getElementById("home").style.display = "block";
+
+    document.getElementById("complaintSection").classList.remove("active");
+    document.getElementById("feedbackSection").classList.remove("active");
+}
+
+document.getElementById("complaintForm").addEventListener("submit",function(){
+    document.getElementById("csuccess").style.display="block";
+});
+
+
+</script>
+
+</body>
+</html>

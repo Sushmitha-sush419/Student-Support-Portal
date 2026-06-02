@@ -2,60 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Report Lost Item</title>
     <style>
-    body {
-    background: #f4f6f8;
-    font-family: Arial;
-    }
-    .form-container {
-    width: 400px;
-    margin: 50px auto;
-    padding: 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    text-align: center;
-}
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(147, 197, 253, 0.35), rgba(59, 130, 246, 0.35)),
+                        url('https://wp.classlawgroup.com/wp-content/uploads/2015/07/bigstock-Magnify-Glass-Blue-Grunge-16041161-1600.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            padding: 30px;
+        }
 
-.form-container h2 {
-    margin-bottom: 20px;
-}
+        .back-home {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            background: #0F52BA;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
 
-.form-container input {
-    width: 90%;
-    padding: 8px;
-    margin-top: 5px;
-}
+        .form-container {
+            width: 400px;
+            margin: 80px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: white;
+        }
 
-.form-container button {
-    padding: 10px 20px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
+        .form-container h2 { margin-bottom: 20px; text-shadow: 1px 1px 2px #000; }
 
-.form-container button:hover {
-    background: #45a049;
-}
+        .form-container input {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-container button {
+            padding: 12px 25px;
+            background: #0F52BA;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .form-container button:hover { background: #0b3d8a; }
     </style>
 </head>
 <body>
-<div class="form-container">
-      <a href="/">⬅ Back to Portal</a>
 
-      <h2>Report Lost Item</h2>
-
-      <form method="POST" enctype="multipart/form-data">
-       Item Name: <input type="text" name="item"><br><br>
-       Description: <input type="text" name="description"><br><br>
-       Location: <input type="text" name="location"><br><br>
-       Contact: <input type="text" name="contact"><br><br>
-       Image: <input type="file" name="image"><br><br>
-
-       <button type="submit">Submit</button>
-       </form>
+<div class="back-home">
+    <a href="/all_items">⬅ Back to Portal</a>
 </div>
+
+<div class="form-container">
+    <h2>Report Lost Item 🔍</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        Item Name:<br> <input type="text" name="item" required><br><br>
+        Description:<br> <input type="text" name="description" required><br><br>
+        Location:<br> <input type="text" name="location" required><br><br>
+        Contact:<br> <input type="text" name="contact" required><br><br>
+        Image:<br> <input type="file" name="image" style="background:none; color:white;"><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
 </body>
 </html>

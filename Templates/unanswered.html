@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pending Questions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.magnific.com/premium-photo/3d-faq-speech-bubble-icons-render-purple-background-question-answer-communication-social-dialogue-banner-with-color-rectangular-chat-message-boxes-ask-doubt-signs-empty-space_645257-2768.jpg?w=2000');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 30px;
+        }
+        .back-home {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 14px;
+        }
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            background: #545AA7;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: rgba(255,255,255,0.35);
+            padding: 25px;
+            border-radius: 22px;
+            box-shadow: 0 8px 25px rgba(106,13,173,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .question-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #8e44ad;
+            color: white;
+            cursor: pointer;
+        }
+        a { text-decoration: none; color: #8e44ad; }
+        a:hover { color: #5e2a84; }
+        h2 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+
+<div class="back-home">
+    <a href="/doubts">⬅ Back to Main Portal</a>
+</div>
+
+<div class="container">
+    <h2>Pending Questions</h2>
+
+    {% for q in questions %}
+    <div class="question-card">
+        <p><b>Q:</b> {{ q[1] }}</p>
+
+        <form method="POST" action="/answer/{{ q[0] }}">
+            <input type="text" name="answer" placeholder="Write reply..." required>
+            <button type="submit">Reply</button>
+        </form>
+
+        <div style="margin-top: 15px;">
+            <a href="/report/{{ q[0] }}">🚩 Report</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="question-card">
+        <p>No unanswered questions. You're all caught up!</p>
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

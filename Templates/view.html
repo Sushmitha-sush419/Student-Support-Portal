@@ -1,66 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>Lost Items List</title>
     <style>
-    .search-container {
-    text-align: center;
-    margin-top: 30px;
-     }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(147, 197, 253, 0.35), rgba(59, 130, 246, 0.35)),
+                        url('https://wp.classlawgroup.com/wp-content/uploads/2015/07/bigstock-Magnify-Glass-Blue-Grunge-16041161-1600.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            padding: 30px;
+        }
 
-    .search-container input {
-    padding: 8px;
-    width: 250px;
-    }
+        .back-home {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            background: #0F52BA;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
 
-    .search-container button {
-    padding: 8px 12px;
-    cursor: pointer;
-    }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
 
-   .no-result {
-    color: red;
-    margin-top: 15px;
-    font-weight: bold;
-    }
+        input[type="text"] {
+            padding: 12px;
+            width: 60%;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            background: #0F52BA;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .no-result { color: #ffcccc; font-weight: bold; margin-top: 15px; }
     </style>
 </head>
 <body>
-<h2 style="text-align:center;">Lost Items List 🔍</h2>
-<div class="search-container">
+
+<div class="back-home">
+    <a href="/all_items">⬅ Back to Portal</a>
+</div>
+
+<div class="container">
+    <h1 style="margin-top:0;">Lost Items List 🔍</h1>
 
     <form method="POST" action="/view">
-     <input type="text" name="search" placeholder="Search item..." required>
-       <button type="submit">Search</button>
+        <input type="text" name="search" placeholder="Search item..." required>
+        <button type="submit">Search</button>
     </form>
+
     {% if no_result %}
-        <p class="no_result"> ❌ No results found for "{{ search }}"</p>
+        <p class="no-result">❌ No results found for "{{ search }}"</p>
     {% endif %}
-</div>
-{% for item in items %}
-<div style="
-    border:1px solid #ccc;
-    padding:15px;
-    margin:15px auto;
-    width:50%;
-    border-radius:10px;
-    box-shadow: 2px 2px 10px #ccc;
-">
-    <h3>{{ item[1] }}</h3>
-    <p><b>Description:</b> {{ item[2] }}</p>
-    <p><b>Location:</b> {{ item[3] }}</p>
-    <p><b>Contact:</b> {{ item[4] }}</p>
-    {% if item[5] %}
-    <img src="{{ url_for('static', filename='uploads/' + item[5]) }}" width="150"><br>
-{% endif %}
-</div>
-{% endfor %}
 
-<div style="text-align:center; margin:20px;">
-
-    <a href="/">
-        <button>⬅ Back to Portal</button>
-    </a>
+    {% for item in items %}
+    <div class="item-card">
+        <h3>{{ item[1] }}</h3>
+        <p><b>Description:</b> {{ item[2] }}</p>
+        <p><b>Location:</b> {{ item[3] }}</p>
+        <p><b>Contact:</b> {{ item[4] }}</p>
+        {% if item[5] %}
+            <img src="{{ url_for('static', filename='uploads/' + item[5]) }}" width="150" style="border-radius:8px;">
+        {% endif %}
+    </div>
+    {% endfor %}
 </div>
+
 </body>
 </html>

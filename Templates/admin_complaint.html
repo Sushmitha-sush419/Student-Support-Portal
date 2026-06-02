@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .back-home{
+    position:absolute;
+    top:5px;
+    left:15px;
+    font-size:14px;
+}
+</style>
+<body>
+<div class="back-home">
+    <a href="/complaint">⬅ Back to Home</a>
+</div>
+<h1>Complaints Admin Panel</h1>
+<table border="1">
+    <tr><th>ID</th><th>Type</th><th>Issue</th><th>Description</th><th>Status</th><th>Action</th></tr>
+    {% for c in complaints %}
+    <tr>
+        <td>{{ c[0] }}</td><td>{{ c[1] }}</td><td>{{ c[2] }}</td><td>{{ c[3] }}</td><td>{{ c[4] }}</td>
+        <td>
+            {% if c[4] == 'Pending' %}
+            <a href="/resolve_complaint/{{ c[0] }}">Mark Resolved</a>
+            {% else %}Resolved{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

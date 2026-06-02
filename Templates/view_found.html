@@ -4,73 +4,85 @@
     <title>Found Items</title>
     <style>
         body {
-            font-family: Arial;
-            background-color: #f4f6f8;
+            margin: 0;
+            font-family: Arial, sans-serif;
             text-align: center;
+            background: linear-gradient(135deg, rgba(147, 197, 253, 0.35), rgba(59, 130, 246, 0.35)),
+                        url('https://wp.classlawgroup.com/wp-content/uploads/2015/07/bigstock-Magnify-Glass-Blue-Grunge-16041161-1600.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            padding: 30px;
         }
 
-        h1 {
-            margin-top: 20px;
+        .back-home {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            background: #0F52BA;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
         }
 
         .container {
-            width: 60%;
+            max-width: 800px;
             margin: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .item-card {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
             text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        img {
-            width: 150px;
-            margin-top: 10px;
-            border-radius: 8px;
-        }
-
-        .back {
-            display: inline-block;
-            margin: 20px;
-            text-decoration: none;
-            color: white;
-            background: #007bff;
-            padding: 8px 15px;
-            border-radius: 5px;
-        }
+        h2 { margin-top: 0; color: white; text-shadow: 1px 1px 2px #000; }
     </style>
 </head>
-
 <body>
 
-    <a href="/" class="back">⬅ Back to Portal</a>
+<div class="back-home">
+    <a href="/all_items">⬅ Back to Portal</a>
+</div>
 
+<div class="container">
     <h2>📦 Found Items</h2>
 
-{% if items and items|length > 0 %}
+    {% if items and items|length > 0 %}
+        {% for item in items %}
+            <div class="item-card">
+                <h3>{{ item[1] }}</h3>
+                <p><b>Description:</b> {{ item[2] }}</p>
+                <p><b>Location:</b> {{ item[3] }}</p>
+                <p><b>Contact:</b> {{ item[4] }}</p>
 
-    {% for item in items %}
-        <div class="card">
-            <h3>{{ item[1] }}</h3>
-            <p>{{ item[2] }}</p>
-            <p><b>Location:</b> {{ item[3] }}</p>
-            <p><b>Contact:</b> {{ item[4] }}</p>
-
-            {% if item[5] %}
-                <img src="/static/uploads/{{ item[5] }}" width="120">
-            {% endif %}
+                {% if item[5] %}
+                    <img src="/static/uploads/{{ item[5] }}" width="150" style="border-radius:8px;">
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="item-card">
+            <p>No items found yet 😳</p>
         </div>
-        <br>
-    {% endfor %}
-
-{% else %}
-    <p>No found items yet 😳</p>
-{% endif %}
-    </div>
+    {% endif %}
+</div>
 
 </body>
 </html>

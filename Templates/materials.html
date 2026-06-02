@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Materials</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url("https://images.unsplash.com/photo-1524995997946-a1c2e315a42f");
+
+    background-size:cover;
+    background-position:center;
+
+    min-height:100vh;
+    padding:30px;
+    color:white;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+    display:inline-block;
+    text-decoration:none;
+    background:#1d4ed8;
+    color:white;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:600;
+    margin-bottom:25px;
+    transition:0.3s;
+}
+
+.back-btn:hover{
+    background:#2563eb;
+    transform:scale(1.05);
+}
+
+/* MAIN BOX */
+
+.container{
+    max-width:1000px;
+    margin:auto;
+
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,0.2);
+
+    border-radius:25px;
+
+    padding:40px;
+
+    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+}
+
+/* TITLE */
+
+.title{
+    text-align:center;
+    font-size:45px;
+    font-weight:700;
+    margin-bottom:10px;
+
+    text-shadow:2px 2px 8px rgba(0,0,0,0.7);
+}
+
+.subtitle{
+    text-align:center;
+    font-size:18px;
+    opacity:0.9;
+    margin-bottom:35px;
+}
+
+/* PANEL */
+
+.role-box{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.role-box p{
+    display:inline-block;
+
+    background:rgba(255,255,255,0.15);
+
+    padding:10px 18px;
+
+    border-radius:12px;
+
+    font-weight:600;
+}
+
+/* UPLOAD */
+
+.upload-box{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+input[type="file"]{
+    padding:12px;
+    border-radius:12px;
+    border:none;
+
+    background:white;
+    color:black;
+
+    margin-bottom:15px;
+}
+
+.upload-btn{
+    border:none;
+
+    padding:12px 24px;
+
+    background:#22c55e;
+
+    color:white;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.upload-btn:hover{
+    background:#16a34a;
+    transform:scale(1.05);
+}
+
+/* FILE CARDS */
+
+.files-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+}
+
+.file-card{
+    background:rgba(255,255,255,0.13);
+
+    border-radius:20px;
+
+    padding:25px;
+
+    text-align:center;
+
+    transition:0.3s;
+
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+.file-card:hover{
+    transform:translateY(-8px);
+    background:rgba(255,255,255,0.2);
+}
+
+.file-icon{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.file-name{
+    font-size:18px;
+    font-weight:600;
+    word-break:break-word;
+    margin-bottom:20px;
+}
+
+/* BUTTONS */
+
+.btn-group{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.view-btn,
+.download-btn,
+.delete-btn{
+    text-decoration:none;
+    padding:10px 16px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.view-btn{
+    background:#3b82f6;
+    color:white;
+}
+
+.view-btn:hover{
+    background:#2563eb;
+}
+
+.download-btn{
+    background:#9333ea;
+    color:white;
+}
+
+.download-btn:hover{
+    background:#7e22ce;
+}
+
+.delete-btn{
+    background:#ef4444;
+    color:white;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    margin-top:40px;
+    font-size:20px;
+    opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<a href="/study" class="back-btn">⬅ Back to Home</a>
+
+<div class="container">
+
+<h1 class="title">{{ subject }}</h1>
+
+<p class="subtitle">
+{{ material_type }} Materials
+</p>
+
+<!-- ROLE -->
+
+<div class="role-box">
+
+{% if session['role'] == 'lecturer' %}
+<p>👨‍🏫 Lecturer Panel</p>
+{% elif session['role'] == 'admin' %}
+<p>🛡️ Admin Panel</p>
+{% endif %}
+
+</div>
+
+<!-- UPLOAD -->
+
+{% if session['role'] in ['lecturer', 'admin'] %}
+
+<div class="upload-box">
+
+<form method="POST" enctype="multipart/form-data">
+
+<input type="file" name="file" required>
+
+<br>
+
+<button type="submit" class="upload-btn">
+Upload File
+</button>
+
+</form>
+
+</div>
+
+{% endif %}
+
+<!-- FILES -->
+
+{% if files %}
+
+<div class="files-grid">
+
+{% for f in files %}
+
+<div class="file-card">
+
+<div class="file-icon">📘</div>
+
+<div class="file-name">
+{{ f }}
+</div>
+
+<div class="btn-group">
+
+<a
+class="view-btn"
+href="/uploads/{{ material_type }}/{{ course }}/{{ value }}/{{ subject }}/{{ f }}"
+target="_blank">
+View
+</a>
+
+<a
+class="download-btn"
+href="/download/{{ material_type }}/{{ course }}/{{ value }}/{{ subject }}/{{ f }}">
+Download
+</a>
+
+{% if session.get('role') in ['lecturer', 'admin'] %}
+
+<a
+class="delete-btn"
+href="/delete_file/{{ material_type }}/{{ course }}/{{ value }}/{{ subject }}/{{ f }}"
+onclick="return confirm('Delete this file?')">
+Delete
+</a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<p class="empty">
+📂 No files uploaded yet
+</p>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

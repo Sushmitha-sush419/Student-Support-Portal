@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .back-home{
+    position:absolute;
+    top:5px;
+    left:15px;
+    font-size:14px;
+}
+</style>
+<body>
+<div class="back-home">
+    <a href="/complaint">⬅ Back to Home</a>
+</div>
+<h1>Feedback Admin Panel</h1>
+<table border="1">
+    <tr><th>ID</th><th>Type</th><th>Dept</th><th>Class</th><th>Issue</th><th>Description</th><th>Status</th><th>Action</th></tr>
+    {% for f in feedbacks %}
+    <tr>
+        <td>{{ f[0] }}</td><td>{{ f[1] }}</td><td>{{ f[2] }}</td><td>{{ f[3] }}</td><td>{{ f[4] }}</td><td>{{ f[5] }}</td><td>{{ f[6] }}</td>
+        <td>
+            {% if f[6] == 'Pending' %}
+            <a href="/resolve_feedback/{{ f[0] }}">Mark Resolved</a>
+            {% else %}Resolved{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

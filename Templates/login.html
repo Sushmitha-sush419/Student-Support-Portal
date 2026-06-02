@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<style>
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#4facfe,#00f2fe);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+.box{
+background:white;
+padding:30px;
+border-radius:15px;
+width:380px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,0.2)
+}
+.tabs{
+display:flex;
+margin-bottom:20px;
+border-radius:8px;
+overflow:hidden;
+}
+.tab{
+flex:1;
+padding:12px;
+background:#eee;
+cursor:pointer;
+font-weight:bold;
+border:none;
+}
+.tabs .active{
+background:#007bff;
+color:white;
+}
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+}
+button.login-btn{
+width:100%;
+padding:12px;
+background:#007bff;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+a{
+display:block;
+margin-top:12px;
+text-decoration:none;
+color:#007bff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="tabs">
+<button type="button" class="tab active" onclick="setRole('student',this)">Student</button>
+    <button type="button" class="tab" onclick="setRole('lecturer',this)">Lecturer</button>
+    <button type="button" class="tab" onclick="setRole('admin',this)">Admin</button>
+</div>
+    <h2>Login</h2>
+    <form method="POST" action="/login">
+        <input type="hidden" name="role" id="role"value="student">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" class="login-btn">Login</button>
+    </form>
+    <a href="/signup">Create New Account</a>
+    <a href="/forgot_password">Forgot Password</a>
+</div>
+
+<script>
+    function setRole(role, clickedTab){
+    document.getElementById("role").value=role;
+    let tabs=document.querySelectorAll(".tab");
+    tabs.forEach(tab => tab.classList.remove("active"));
+    clickedTab.classList.add("active");
+    }
+</script>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div style="color: green; font-weight: bold;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+</body>
+</html>

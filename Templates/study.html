@@ -1,0 +1,122 @@
+<!-- study.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Materials</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+    min-height:100vh;
+    background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    font-family:'Poppins',sans-serif;
+}
+
+.container{
+    width:100%;
+    max-width:1100px;
+}
+
+.glass{
+    background:rgba(255,255,255,0.55);
+    border-radius:28px;
+    padding:40px;
+    backdrop-filter:blur(14px);
+}
+
+.back-btn{
+    display:inline-block;
+    margin-bottom:25px;
+    text-decoration:none;
+    color:#0f172a;
+    background:white;
+    padding:12px 18px;
+    border-radius:14px;
+    font-weight:600;
+}
+
+.title{
+    text-align:center;
+    font-size:38px;
+    margin-bottom:35px;
+    color:#0f172a;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    padding:40px 25px;
+    border-radius:24px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    background:#38bdf8;
+}
+
+.card:hover a{
+    color:white;
+}
+
+.card a{
+    color:#0f172a;
+    text-decoration:none;
+    font-size:24px;
+    font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="glass">
+
+<a href="/home" class="back-btn">
+⬅ Back to Home
+</a>
+
+<h1 class="title">Study Materials</h1>
+
+<div class="grid">
+
+<div class="card">
+<a href="/study/notes">📘 Notes</a>
+</div>
+
+<div class="card">
+<a href="/study/syllabus">📚 Syllabus</a>
+</div>
+
+<div class="card">
+<a href="/study/qps">📝 Question Papers</a>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reported Questions</title>
+</head>
+<body>
+
+<a href="/doubts">
+⬅ Back to Portal
+</a>
+
+{% if reports %}
+{% for report in reports %}
+<div style="border:1px solid gray; padding:15px; margin:15px;">
+    <p><b>Question:</b> {{ report[1] }}</p>
+    <p><b>Total Reports:</b> {{ report[2] }}</p>
+
+    {% if report[2]|int >= 3 %}
+<p><b>⚠ Flagged as high-risk</b></p>
+{% endif %}
+
+
+    <p><b>Reasons:</b> {{ report[3] }}</p>
+</div>
+{% endfor %}{% else %}
+<p>No reports available.</p>
+{% endif %}
+</body>
+</html>
+
+
+

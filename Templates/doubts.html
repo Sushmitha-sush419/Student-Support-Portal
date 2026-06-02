@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doubt Clearing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.magnific.com/premium-photo/3d-faq-speech-bubble-icons-render-purple-background-question-answer-communication-social-dialogue-banner-with-color-rectangular-chat-message-boxes-ask-doubt-signs-empty-space_645257-2768.jpg?w=2000');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 30px;
+        }
+         .back-home{
+            position:absolute;
+            top:15px;
+            left:15px;
+            font-size:14px;
+        }
+
+        .back-home a{
+            color:white;
+            text-decoration:none;
+            background: #545AA7;
+            padding:8px 14px;
+            border-radius:6px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: rgba(255,255,255,0.35);
+            padding: 25px;
+            border-radius: 22px;
+            box-shadow: 0 8px 25px rgba(106,13,173,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .question-card{
+            background:#fff;
+            border-radius:14px;
+            padding:20px;
+            margin-bottom:22px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        input[type="text"]{
+            width:70%;
+            padding:10px;
+            border-radius:10px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            padding:10px 14px;
+            border:none;
+            border-radius:10px;
+            background:#8e44ad;
+            color:white;
+        }
+
+        a{
+            text-decoration:none;
+            color:#8e44ad;
+            margin-right:15px;
+        }
+
+        a:hover{
+            color:#5e2a84;
+        }
+
+        .low-rating{
+            color:blue;
+        }
+    </style>
+</head>
+
+<body>
+<div class="back-home">
+        <a href="/home">⬅ Back to Home</a>
+    </div>
+<div class="container">
+    {% if role == "student" %}
+
+<div style="
+background: rgba(142, 68, 173, 0.10);
+padding: 8px 12px;
+border-left: 3px solid #8e44ad;
+border-radius: 6px;
+font-size: 12px;
+color: red;
+margin-bottom:15px;
+">
+Note: Ask only academic-related questions, campus-related questions, and subject-related queries.
+</div>
+
+{% endif %}
+
+<h2>Doubt Clearing Section</h2>
+
+<p><b>Logged in as:</b> {{ role }}</p>
+
+{% if role == "admin" %}
+<a href="/view_reports">🚩 View Reports</a>
+<br><br>
+{% endif %}
+
+<form method="GET" action="/doubts">
+    <input type="text"
+           name="search"
+           placeholder="Search questions..."
+           value="{{ search_query }}">
+
+    <button type="submit">Search</button>
+    <br>
+    {% if search_query %}
+    <a href="/doubts" style="margin-left:10px;">
+        ⬅ Back to Portal
+    </a>
+    {% endif %}
+</form>
+
+<br>
+
+{% if role == "student" %}
+    <details>
+    <summary style="cursor:pointer; font-size:16px;">
+        Ask Question
+    </summary>
+
+    <form method="POST" action="/add_question" style="margin-top:12px;">
+        <input type="text"
+               id="question"
+               name="question"
+               maxlenght=300
+               placeholder="Ask your doubt..."
+               required
+               oninput="document.getElementById('qcount').innerText=this.value.length + '/300';">
+        <small id="qcount">0/300</small>
+        <button type="submit">Submit</button>
+    </form>
+</details>
+{% endif %}
+
+<hr style="
+border:none;
+border-top:1px solid rgba(0,0,0,0.25);
+margin:14px 0;
+">
+
+<h3 style="
+margin-top:0;
+font-size:20px;
+">
+Recent Questions
+</h3>
+    {% if search_query and questions|length == 0 %}
+<p style="margin-top:15px;">
+No results found for "{{ search_query }}"
+</p>
+{% endif %}
+{% for q in questions %}
+
+<div class="question-card">
+
+    <p><b>Q:</b> {{ q[1] }}</p>
+
+    <p>
+        <b>A:</b>
+        {{ q[2] if q[2] else "Waiting for teacher/admin reply..." }}
+    </p>
+
+
+    {% if role in ["lecturer","admin"] %}
+    <form method="POST" action="/answer/{{ q[0] }}">
+        <input type="text"
+               id="answer"
+               name="answer"
+               maxlenght=500
+               placeholder="Write reply"
+               oninput="document.getElementById('acount').innerText=this.value.length + '/500';">
+        <small id="acount">0/500</small>
+        <button type="submit">Reply</button>
+    </form>
+    <br>
+    {% endif %}
+
+
+    <div>
+
+        {% if q[2] %}
+        <a href="/like/{{ q[0] }}">👍 {{ q[3] }}</a>
+
+        <a href="/dislike/{{ q[0] }}">👎 {{ q[4] }}</a>
+        {% endif %}
+
+
+        {% if role in ["student","teacher"] %}
+        <a href="/report/{{ q[0] }}">🚩 Report</a>
+        {% endif %}
+
+
+        {% if role == "admin" %}
+        <a href="/delete_question/{{ q[0] }}">
+            🗑 Delete Question
+        </a>
+        {% endif %}
+
+    </div>
+
+
+    {% if q[2] %}
+
+    <p>
+        <b>Current rating:</b>
+        ⭐ {{ q[5] }}/5
+    </p>
+
+        {% if role=="student" %}
+        <p>
+            Rate this answer:
+
+            <a href="/rate/{{ q[0] }}/1" class="low-rating">1</a>
+            <a href="/rate/{{ q[0] }}/2" class="low-rating">2</a>
+            <a href="/rate/{{ q[0] }}/3">3</a>
+            <a href="/rate/{{ q[0] }}/4">4</a>
+            <a href="/rate/{{ q[0] }}/5">5</a>
+
+        </p>
+        {% endif %}
+
+    {% endif %}
+
+    </div>   <!-- closes one question card -->
+    {% endfor %}
+   {% if role in ["lecturer", "admin"] %}
+    <a href="/unanswered" style="background:#e74c3c; color:white; padding:8px 12px; border-radius:6px;">
+        View Unanswered Questions
+    </a>
+{% endif %}
+</body>
+</html>
